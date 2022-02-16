@@ -3,3 +3,5 @@
 " Basic options for neovim
 lua require('config.options')
 
+" Keybinding for neovim
+lua require('config.keybinding')
