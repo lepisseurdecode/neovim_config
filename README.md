@@ -23,3 +23,19 @@ Packer.nvim is the plugin manager
 #### Configuration file
 
 [configuration file](lua/config/plugins_manager.lua)
+
+### ChadTree
+
+ChadTree is a file explorer.
+
+#### Link
+
+[page github](https://github.com/ms-jpq/chadtree)
+
+#### Configuration file
+
+[configuration file](lua/config/chadtree.lua)
+
+#### Shortcut
+
+*F2*: Toggle the file explorer
