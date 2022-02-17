@@ -39,3 +39,11 @@ ChadTree is a file explorer.
 #### Shortcut
 
 *F2*: Toggle the file explorer
+
+### Vim-surround
+
+Surround words
+
+#### Link
+
+[page github](https://github.com/tpope/vim-surround)
