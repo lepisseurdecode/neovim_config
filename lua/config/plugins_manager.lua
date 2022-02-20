@@ -6,4 +6,17 @@ return require('packer').startup(function()
 	}
 
 	use 'tpope/vim-surround' -- Plugin to surroundings words
+
+	
+	use {'neovim/nvim-lspconfig',-- Language configuration protocol configuration
+		config = require('config.lsp').config()
+	}
+
+	use {'williamboman/nvim-lsp-installer', -- Automaticaly install lsp server
+		requires = {'neovim/nvim-lspconfig'},
+		config = require('config.lsp').load()
+	}
+	
+
+
 end)
