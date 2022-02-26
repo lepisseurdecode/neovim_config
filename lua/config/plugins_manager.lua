@@ -16,7 +16,10 @@ return require('packer').startup(function()
 		requires = {'neovim/nvim-lspconfig'},
 		config = require('config.lsp').load()
 	}
-	
 
+	use {'phaazon/hop.nvim',
+		branch = 'v1',
+		config = require('config.hop').config()
+	}
 
 end)

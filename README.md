@@ -89,3 +89,20 @@ Install automatically lsp server on neovim startup
 *clangd*: Lsp server for C and C++. [Web site](https://clangd.llvm.org/)
 *pyright*: Lsp server for Python. [Web site](https://github.com/microsoft/pyright)
 
+### Hop.nvim
+
+Hop.nvim allow to move easely through the buffer
+
+#### Shortcut
+
+- *é*: Move with word
+- *û*: Move with line
+
+#### Link
+
+[page github](https://github.com/phaazon/hop.nvim)
+
+#### Configuration file
+
+[configuration file](lua/config/hop.lua)
+
