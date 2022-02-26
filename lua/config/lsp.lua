@@ -1,7 +1,8 @@
 local lsp = {}
 
 local servers = {
-	'clangd'
+	'clangd',
+	'pyright'
 }
 
 function map (key, cmd, prefix, postfix )

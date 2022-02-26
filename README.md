@@ -87,4 +87,5 @@ Install automatically lsp server on neovim startup
 #### Current lsp server
 
 *clangd*: Lsp server for C and C++. [Web site](https://clangd.llvm.org/)
+*pyright*: Lsp server for Python. [Web site](https://github.com/microsoft/pyright)
 
