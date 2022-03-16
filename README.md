@@ -106,3 +106,30 @@ Hop.nvim allow to move easely through the buffer
 
 [configuration file](lua/config/hop.lua)
 
+### Nvim-cmp
+
+Nvim-cmp is a completion engine
+
+#### Link
+
+[page github](https://github.com/hrsh7th/nvim-cmp)
+
+#### Configuration file
+
+[configuration file](lua/config/cmp.lua)
+
+#### Completion source installed
+
+- *nvim-cmp-lsp*: Use lsp at an autocompletion source. [page github](https://github.com/hrsh7th/cmp-nvim-lsp)
+- *cmp-path*: Use path at an autocompletion source. [page github](https://github.com/hrsh7th/cmp-path)
+- *cmp-buffer*: Use the current at an autocompletion source. [page github](https://github.com/hrsh7th/cmp-buffer)
+- *cmp-cmdline*: Use autocompletion for vim command line. [page github](https://github.com/hrsh7th/cmp-cmdline)
+
+#### Shortcut
+
+- *Ctrl-y* : Accept the suggestion
+- *Ctrl-n*: Go domn in suggestion list
+- *Ctrl-p*: Go up in the suggestion list
+- *Ctrl-j*: Scroll down the documention
+- *Ctrl-k*: Scroll up the documetation
+- *Ctrl-space*: Start suggestion

@@ -8,18 +8,30 @@ return require('packer').startup(function()
 	use 'tpope/vim-surround' -- Plugin to surroundings words
 
 	
+	local lsp_config = require('config.lsp') 
 	use {'neovim/nvim-lspconfig',-- Language configuration protocol configuration
-		config = require('config.lsp').config()
+		config = lsp_config.config()
 	}
 
-	use {'williamboman/nvim-lsp-installer', -- Automaticaly install lsp server
-		requires = {'neovim/nvim-lspconfig'},
-		config = require('config.lsp').load()
-	}
 
 	use {'phaazon/hop.nvim',
 		branch = 'v1',
 		config = require('config.hop').config()
 	}
 
+	use {'hrsh7th/nvim-cmp',
+		requires = {
+			{'hrsh7th/cmp-nvim-lsp'},
+			{'hrsh7th/cmp-path'},
+			{'hrsh7th/cmp-buffer'},
+			{'hrsh7th/cmp-cmdline'},
+			{'saadparwaiz1/cmp_luasnip'},
+			{'onsails/lspkind-nvim'}
+		},
+		config = require('config.cmp').config()
+	}
+
+	use { 'williamboman/nvim-lsp-installer',
+		config = lsp_config.load()
+	}
 end)
