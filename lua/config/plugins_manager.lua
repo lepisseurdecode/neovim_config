@@ -26,6 +26,9 @@ return require('packer').startup(function()
 			{'hrsh7th/cmp-buffer'},
 			{'hrsh7th/cmp-cmdline'},
 			{'saadparwaiz1/cmp_luasnip'},
+			{'L3MON4D3/LuaSnip',
+				config = require('config.snippet').config()
+			},
 			{'onsails/lspkind-nvim'}
 		},
 		config = require('config.cmp').config()

@@ -35,10 +35,18 @@ end
 
 function lsp.load()
 	install()
-	require('nvim-lsp-installer').on_server_ready(function(server)
-		local opts = {}
-		server:setup(opts)
-		end)
-end
+	require('nvim-lsp-installer').on_server_ready(
+		function(server)
 
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
+			local opts = {
+				capabilities = capabilities
+			}
+
+			server:setup(opts)
+		end
+	)
+end
 return lsp

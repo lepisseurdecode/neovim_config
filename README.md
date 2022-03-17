@@ -133,3 +133,20 @@ Nvim-cmp is a completion engine
 - *Ctrl-j*: Scroll down the documention
 - *Ctrl-k*: Scroll up the documetation
 - *Ctrl-space*: Start suggestion
+
+### LuaSnip
+
+Snippet managaer
+
+#### Link
+
+[page github](https://github.com/L3MON4D3/LuaSnip)
+
+#### Configuration file
+
+[configuration file](lua/config/snippet.lua)
+
+#### Shortcut
+
+- *Ctrl-l*: Expand or jumb
+- *Ctrl-h*: Jumb back
