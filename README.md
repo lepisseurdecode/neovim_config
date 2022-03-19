@@ -150,3 +150,22 @@ Snippet managaer
 
 - *Ctrl-l*: Expand or jumb
 - *Ctrl-h*: Jumb back
+
+### Telescope
+
+Fuzzy seacher
+
+#### Link
+
+[page github](https://github.com/vim-telescope/telescope.nvim)
+
+#### Configuration file
+
+[configuration file](lua/config/fuzzi_search.lua)
+
+#### Shortcut
+
+- *\ff*: Shearch file
+- *\fg*: Live grep
+- *\fb*: Search in buffers
+- *\fh*: Search in documentation

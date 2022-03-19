@@ -37,4 +37,12 @@ return require('packer').startup(function()
 	use { 'williamboman/nvim-lsp-installer',
 		config = lsp_config.load()
 	}
+
+	use {
+		'nvim-telescope/telescope.nvim',
+		requires = {'nvim-lua/plenary.nvim',
+				'BurntSushi/ripgrep'
+			},
+		config = require('config.fuzzy_search').config()
+	}
 end)
