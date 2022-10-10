@@ -2,7 +2,7 @@ return require('packer').startup(function()
 	use 'wbthomason/packer.nvim' -- The Plugin manager
 	 
 	use {'ms-jpq/chadtree', -- The file explorer
-		config =  require('config.chadtree').config()
+		config = require('config.chadtree').config
 	}
 
 	use 'tpope/vim-surround' -- Plugin to surroundings words
@@ -10,13 +10,13 @@ return require('packer').startup(function()
 	
 	local lsp_config = require('config.lsp') 
 	use {'neovim/nvim-lspconfig',-- Language configuration protocol configuration
-		config = lsp_config.config()
+		config = lsp_config.config
 	}
 
 
 	use {'phaazon/hop.nvim',
-		branch = 'v1',
-		config = require('config.hop').config()
+		branch = 'v2',
+		config = require('config.hop').config
 	}
 
 	use {'hrsh7th/nvim-cmp',
@@ -27,22 +27,23 @@ return require('packer').startup(function()
 			{'hrsh7th/cmp-cmdline'},
 			{'saadparwaiz1/cmp_luasnip'},
 			{'L3MON4D3/LuaSnip',
-				config = require('config.snippet').config()
+				config = require('config.snippet').config
 			},
 			{'onsails/lspkind-nvim'}
 		},
-		config = require('config.cmp').config()
+		config = require('config.cmp').config
 	}
 
 	use { 'williamboman/nvim-lsp-installer',
-		config = lsp_config.load()
+		config = lsp_config.load
 	}
 
 	use {
 		'nvim-telescope/telescope.nvim',
-		requires = {'nvim-lua/plenary.nvim',
-				'BurntSushi/ripgrep'
-			},
-		config = require('config.fuzzy_search').config()
+		requires = {
+			{'nvim-lua/plenary.nvim'},
+			{'BurntSushi/ripgrep'}
+		},
+		config = require('config.fuzzy_search').config
 	}
 end)
