@@ -72,13 +72,14 @@ Configuration for the built-in language server protocole
 - *\c*: Open action menu
 - *\d*: Go to the definition type
 
-### Nvim-lsp-installer
+### Mason
 
 Install automatically lsp server on neovim startup
 
 #### Link
 
-[page github](https://github.com/williamboman/nvim-lsp-installer)
+[page github](https://github.com/williamboman/mason)
+[page github](https://github.com/williamboman/mason-lspconfig)
 
 #### Configuration file
 

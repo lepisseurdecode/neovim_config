@@ -8,10 +8,6 @@ return require('packer').startup(function()
 	use 'tpope/vim-surround' -- Plugin to surroundings words
 
 	
-	local lsp_config = require('config.lsp') 
-	use {'neovim/nvim-lspconfig',-- Language configuration protocol configuration
-		config = lsp_config.config
-	}
 
 
 	use {'phaazon/hop.nvim',
@@ -34,8 +30,16 @@ return require('packer').startup(function()
 		config = require('config.cmp').config
 	}
 
-	use { 'williamboman/nvim-lsp-installer',
-		config = lsp_config.load
+	local lsp_config = require('config.lsp') 
+
+	use {'neovim/nvim-lspconfig',-- Language configuration protocol configuration
+		config = lsp_config.config,
+		requires =  { 'williamboman/mason-lspconfig.nvim',
+			config = lsp_config.install,
+			requires = {'williamboman/mason.nvim',
+				config = require('mason').setup()
+			}
+		}
 	}
 
 	use {
