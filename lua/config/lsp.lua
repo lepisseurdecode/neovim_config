@@ -10,7 +10,8 @@ end
 servers = {
 			'clangd',
 			'pyright',
-			'cmake'
+			'cmake',
+			'quick_lint_js'
 		}
 
 function lsp.config()
