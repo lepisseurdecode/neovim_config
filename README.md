@@ -89,6 +89,7 @@ Install automatically lsp server on neovim startup
 
 *clangd*: Lsp server for C and C++. [Web site](https://clangd.llvm.org/)
 *pyright*: Lsp server for Python. [Web site](https://github.com/microsoft/pyright)
+*cmake-language-server*: Lsp server for cmake. [Web site](https://pypi.org/project/cmake-language-server)
 
 ### Hop.nvim
 
