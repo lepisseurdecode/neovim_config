@@ -6,3 +6,6 @@ set.softtabstop = 4
 set.expandtab = false
 set.scrolloff = 7
 set.nu = true
+set.autoread = true
+set.rnu = true
+set.cursorline = true

@@ -1,5 +1,4 @@
 -- Each plugin has its configuration file in ./lua/config
-
 -- Basic options for neovim
 require('config.options')
 
@@ -8,3 +7,5 @@ require('config.keybinding')
 
 -- Configuration for the plugin manager
 require('config.plugins_manager')
+
+require('config.commands')
