@@ -22,6 +22,20 @@ function Clangd_Config()
 	vim.api.nvim_set_keymap( 'n', '<leader>ls', '<cmd>ClangdSwitchSourceHeader<CR>', {noremap=true, silent=true})
 end
 
+function lsp.install()
+	require('mason-lspconfig').setup{
+		ensure_installed = {
+			'pyright',
+			'cmake',
+			'quick_lint_js',
+			'jsonls',
+			'lua_ls',
+			'clangd'
+		},
+		automatic_installation = true
+	}
+
+end
 function lsp.mason()
 	require('mason').setup()
 end
@@ -50,17 +64,4 @@ function lsp.autocompletion()
 		}
 end
 
-function lsp.install()
-	require('mason-lspconfig').setup{
-		ensure_installed = {
-			'pyright',
-			'cmake',
-			'quick_lint_js',
-			'jsonls',
-			'sumneko_lua',
-			'clangd'
-		}
-	}
-
-end
 return lsp
