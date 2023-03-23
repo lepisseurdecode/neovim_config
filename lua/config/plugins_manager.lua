@@ -2,7 +2,8 @@ return require('packer').startup(function()
 	use 'wbthomason/packer.nvim' -- The Plugin manager
 
 	use {'ms-jpq/chadtree', -- The file explorer
-		config = require('config.chadtree').config
+		config = require('config.chadtree').config,
+		run= ':CHADdeps'
 	}
 
 	use 'tpope/vim-surround' -- Plugin to surroundings words
@@ -11,32 +12,27 @@ return require('packer').startup(function()
 		branch = 'v2',
 		config = require('config.hop').config
 	}
+	use {'williamboman/mason.nvim',
+		config = require('config.lsp').mason
+	}
+	use {'neovim/nvim-lspconfig'}
 
-	use   { 'williamboman/mason-lspconfig.nvim',
-		config = require('config.lsp').install,
-		requires = {
-			{'williamboman/mason.nvim',
-				config = require('config.lsp').mason
-			},
-			{'neovim/nvim-lspconfig'}
-		}
+	use { 'williamboman/mason-lspconfig.nvim',
+		after = {'mason.nvim', 'nvim-lspconfig'},
+		config = require('config.lsp').install
 	}
 
 	use {'mhartington/formatter.nvim',
-		requires = {'williamboman/mason.nvim',
-			config = require('config.formatter').install
-		},
-		config = require('config.formatter').config
+		after = 'mason.nvim',
+		config = require('config.formatter').install
 	}
+	use {'mfussenegger/nvim-dap'}
 
-		use {'jayp0521/mason-nvim-dap.nvim',
-			config = require('config.dap').install,
-			requires = {
-				{'williamboman/mason.nvim',
-					config = require('config.lsp').config
-				},
-				'mfussenegger/nvim-dap'}
-		}
+	use {'jayp0521/mason-nvim-dap.nvim',
+		after = { 'mason.nvim', 'nvim-dap' },
+		config = require('config.dap').install
+
+	}
 
 
 
@@ -47,6 +43,7 @@ return require('packer').startup(function()
 	use {'hrsh7th/nvim-cmp',
 		requires = {
 			{'hrsh7th/cmp-nvim-lsp',
+				after = 'mason-lspconfig.nvim',
 				config = require('config.lsp').autocompletion
 			},
 			{'hrsh7th/cmp-path'},
@@ -84,7 +81,7 @@ return require('packer').startup(function()
 		config = require('config.themes').config,
 		requires =  {
 			{'nvim-treesitter/nvim-treesitter',
-			config = require('config.themes').treesitter
+				config = require('config.themes').treesitter
 			},
 			{'nvim-lualine/lualine.nvim',
 				config = require('config.themes').statusline,
@@ -98,5 +95,5 @@ return require('packer').startup(function()
 
 	use{'numToStr/Comment.nvim',
 		config = require('config.comment').config
-		}
+	}
 end)
