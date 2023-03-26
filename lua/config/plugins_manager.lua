@@ -1,15 +1,14 @@
 return require('packer').startup(function()
 	use 'wbthomason/packer.nvim' -- The Plugin manager
 
-	use {'ms-jpq/chadtree', -- The file explorer
-		config = require('config.chadtree').config,
-		run= ':CHADdeps'
+	use {'nvim-tree/nvim-tree.lua',
+		config = require('config.tree_explorer').config,
+		require = {{'nvim-tree/nvim-web-devicons',require('nvim-web-devicons').setup}}
 	}
 
 	use 'tpope/vim-surround' -- Plugin to surroundings words
 
 	use {'phaazon/hop.nvim',
-		branch = 'v2',
 		config = require('config.hop').config
 	}
 	use {'williamboman/mason.nvim',

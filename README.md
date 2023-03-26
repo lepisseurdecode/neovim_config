@@ -4,6 +4,7 @@ install [ripgrep](https://github.com/BurntSushi/ripgrep)
 need cmake for telescop optimization
 install [fd](https://github.com/sharkdp/fd)
 make sure a c/c++ compilater is available on path
+downlaod a font like the [JetBrainsMono]{https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/JetBrainsMono.zip}
 
 # Cheat sheet
 
