@@ -17,6 +17,12 @@ function Config()
 
 end
 
+function lsp.manual_config()
+	require('lspconfig').qmlls.setup{
+		on_attach = Config
+	}
+end
+
 function Clangd_Config()
 	Config()
 	vim.api.nvim_set_keymap( 'n', '<leader>ls', '<cmd>ClangdSwitchSourceHeader<CR>', {noremap=true, silent=true})
@@ -32,7 +38,6 @@ function lsp.install()
 			'lua_ls',
 			'clangd'
 		},
-		automatic_installation = true
 	}
 
 end

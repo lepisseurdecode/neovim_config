@@ -9,3 +9,9 @@ set.nu = true
 set.autoread = true
 set.rnu = true
 set.cursorline = true
+
+vim.filetype.add({
+	extension = {
+		qml = 'qmljs'
+	}
+})
