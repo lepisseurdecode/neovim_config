@@ -23,7 +23,6 @@ function cmp.config()
 			{ name = 'nvim_lsp' },
 			{ name = 'path' },
 			{ name = 'buffer', keyword_length = 5 },
-			{ name = 'cmdline'},
 		}),
 		formatting = {
 			format = require('lspkind').cmp_format{
