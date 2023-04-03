@@ -36,13 +36,17 @@ function lsp.install()
 			'quick_lint_js',
 			'jsonls',
 			'lua_ls',
-			'clangd'
+			'clangd',
+			'ltex',
+			'texlab'
 		},
 	}
 
 end
 function lsp.mason()
-	require('mason').setup()
+	require('mason').setup({
+		ensure_installed = {'clang_format'}
+	})
 end
 
 function lsp.autocompletion()
