@@ -25,7 +25,7 @@ return require('packer').startup(function()
 
 	use {'mhartington/formatter.nvim',
 		after = 'mason.nvim',
-		config = require('config.formatter').install
+		config = require('config.formatter').config
 	}
 	use {'mfussenegger/nvim-dap'}
 
