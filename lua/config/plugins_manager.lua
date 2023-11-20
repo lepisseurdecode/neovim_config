@@ -1,6 +1,13 @@
 return require('packer').startup(function()
 	use 'wbthomason/packer.nvim' -- The Plugin manager
 
+--	use {'C:/Users/Aschkor/multiproject.nvim',
+--		config = function()require'multiproject_nvim'.setup()end
+--	}
+use {'C:/Users/Aschkor/cmake.nvim',
+	config = function()require'cmake_nvim'.setup()end
+}
+
 	use {'nvim-tree/nvim-tree.lua',
 		config = require('config.tree_explorer').config,
 		require = {{'nvim-tree/nvim-web-devicons',require('nvim-web-devicons').setup}}
@@ -17,6 +24,13 @@ return require('packer').startup(function()
 	use {'neovim/nvim-lspconfig',
 		config = require('config.lsp').manual_config
 	}
+	use {'stevearc/overseer.nvim',
+		config = function ()
+			require('overseer').setup({
+				templates = {"builtin", 'cmake.init_build_dir', 'cmake.select_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run'}
+			})
+		end
+	}
 
 	use { 'williamboman/mason-lspconfig.nvim',
 		after = {'mason.nvim', 'nvim-lspconfig'},
@@ -32,10 +46,7 @@ return require('packer').startup(function()
 	use {'jayp0521/mason-nvim-dap.nvim',
 		after = { 'mason.nvim', 'nvim-dap' },
 		config = require('config.dap').install
-
 	}
-
-
 
 	use {'L3MON4D3/LuaSnip',
 		config = require('config.snippet').config
@@ -96,4 +107,5 @@ return require('packer').startup(function()
 	use{'numToStr/Comment.nvim',
 		config = require('config.comment').config
 	}
+
 end)
