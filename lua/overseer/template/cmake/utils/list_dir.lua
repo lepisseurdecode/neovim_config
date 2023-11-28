@@ -22,7 +22,7 @@ local function read()
 	for line in io.lines(file_name) do
 		content = content .. line
 	end
-	return clean(vim.json.decode(content))
+	return clean(vim.json.decode(content)) or {}
 end
 
 local function write(datas)

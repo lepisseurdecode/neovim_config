@@ -65,23 +65,24 @@ return {
 	end,
 	condition = {
 		callback = function(search)
-			local project_datas = project_files.get()
-			local cmake_data = cmake_file_api.get(project_datas:current())
-			if not utils.has_cmakelists(search) or project_datas:empty() then
-				return false
-			end
-
-			local bin = get_bin(project_datas, cmake_data)
-			 if nil == bin then
-			 	return false
-			 end
-
-			 local file = io.open(bin, 'r')
-			 if file ~= nil then
-				file:close()
-			 	return true
-			 end
-			 return false
+return false
+			-- local project_datas = project_files.get()
+			-- local cmake_data = cmake_file_api.get(project_datas:current())
+			-- if not utils.has_cmakelists(search) or project_datas:empty() then
+			-- 	return false
+			-- end
+			--
+			-- local bin = get_bin(project_datas, cmake_data)
+			--  if nil == bin then
+			--  	return false
+			--  end
+			--
+			--  local file = io.open(bin, 'r')
+			--  if file ~= nil then
+			-- 	file:close()
+			--  	return true
+			--  end
+			--  return false
 		end
 	}
 }

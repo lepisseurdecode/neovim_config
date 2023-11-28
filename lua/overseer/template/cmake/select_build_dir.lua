@@ -1,5 +1,6 @@
 local project_files = require'overseer.template.cmake.utils.list_dir'
 local utils = require'overseer.template.cmake.utils.cmake'
+local cmake_api = require'overseer.template.cmake.utils.cmake_file_api'
 
 return {
 	generator = function(_, cb)
@@ -31,7 +32,7 @@ return {
 			desc = "Path to the new build directory, if it doesn't exist, it will be created",
 			order = order:get(),
 			default = default_new_build,
-			optional = nil ~= default_new_build,
+			optional = nil == default_new_build,
 		}
 		params.generator = {
 			type = 'enum',
@@ -101,29 +102,33 @@ return {
 			params = params,
 			builder = function (param)
 
+				local args
 				if param.new_build_dir ~= nil then
-					local args = {'.', '-B', params.new_build_dir}
-					if 'default' ~= params.generator then
-						table.insert(args, '-G' .. params.generator)
+					args = {'.', '-B', param.new_build_dir}
+					if 'default' ~= param.generator then
+						table.insert(args, '-G' .. param.generator)
 					end
-					if params.export_compile_command then
+					if param.export_compile_command then
 						table.insert(args, '-DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE')
 					end
-					if nil ~= params.cached_vars then
-						for _, var in ipairs(params.cached_vars) do
+					if nil ~= param.cached_vars then
+						for _, var in ipairs(param.cached_vars) do
 							table.insert(args, '-D' .. var)
 						end
 					end
-					cmake_api.write_query(params.new_build_dir, true, true, true, true)
-					file:add(params.build_dir)
+					cmake_api.write_query(param.new_build_dir, true, true, true, true)
+					project_data:add(param.new_build_dir)
 					project_data:write()
-			elseif param.current_build_dir ~= current  and param.current_build_dir ~= '' then
+				elseif param.current_build_dir ~= current  and param.current_build_dir ~= '' then
 					project_data:set_current(param.current_build_dir)
+					args = {'.', '-B', param.current_build_dir}
 					project_data:write()
+				else
+					args = {'.', '-B', current}
 				end
 				return {
 					cmd = {'cmake'},
-					args = {'.', '-B', params.build_dir},
+					args = args,
 					components = {
 						{'on_output_quickfix', set_diagnostics = true},
 						'default',
@@ -133,8 +138,6 @@ return {
 		})})
 	end,
 	condition = {
-		callback = function(data)
-			return project_files.get():count() > 1 and utils.has_cmakelists(data)
-		end
+		callback = utils.has_cmakelists
 	}
 }

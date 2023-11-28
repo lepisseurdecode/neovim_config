@@ -27,7 +27,7 @@ function M.new_cached_vars_param(order)
 			for _, var in ipairs(vars) do
 				local res = vim.split(var, '=')
 				if table.maxn(res) < 2 then
-					required'overseer.log':error('Must be in format <name>[:type]=<value> with ; delimiter')
+					-- required'overseer.log':error('Must be in format <name>[:type]=<value> with ; delimiter')
 					return false
 				end
 			end

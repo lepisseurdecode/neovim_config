@@ -27,7 +27,7 @@ use {'C:/Users/Aschkor/cmake.nvim',
 	use {'stevearc/overseer.nvim',
 		config = function ()
 			require('overseer').setup({
-				templates = {"builtin", 'cmake.init_build_dir', 'cmake.select_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run'}
+				templates = {"builtin", 'cmake.select_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run'}
 			})
 		end
 	}
