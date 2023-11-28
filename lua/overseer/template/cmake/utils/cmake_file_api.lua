@@ -1,9 +1,7 @@
-local json = require'overseer.template.cmake.utils.json'
 local M = {}
 local api_dir = '%s/.cmake/api/v1/%s'
 local reply_dir = '%s/.cmake/api/v1/reply/'
 local client_name = 'overseer.cmake'
-M.build_dir = 'build'
 
 local function file_to_table(path)
 	local file = io.open(path, 'r')
@@ -38,6 +36,9 @@ local function read_index(build_dir)
 	end
 
 	local datas = file_to_table(path .. index)
+	if nil == datas then
+		return {}
+	end
 	local responses = datas.reply['client-' .. client_name]['query.json'].responses
 	local res = {}
 	for _, value in pairs(responses) do
@@ -52,6 +53,7 @@ local function read_index(build_dir)
 		add_to_res('toolchains')
 		add_to_res('cmakeFiles')
 	end
+	res.generator = datas.cmake.generator
 	return res
 end
 
@@ -179,7 +181,7 @@ function M.write_query(build_dir, cache, codemodel, toolchains, cmake_files)
 	if cmake_files then
 		insert("cmakeFiles", 1)
 	end
-	local res = json.encode({requests = datas})
+	local res = vim.json.encode({requests = datas})
 
 	local path = string.format(api_dir, build_dir, string.format('query/client-%s/', client_name))
 
@@ -194,4 +196,9 @@ function M.write_query(build_dir, cache, codemodel, toolchains, cmake_files)
 	file:write(res)
 	file:close()
 end
+
+function M.exists(build_dir)
+	return nil ~= find_index('./' .. string.format(reply_dir, build_dir))
+end
+
 return M

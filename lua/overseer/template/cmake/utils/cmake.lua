@@ -86,10 +86,12 @@ function M.filter_targets(targets)
 	end
 	return res
 end
+
 function M.get_target(project_data, targets)
 	if nil ~= project_data.target then
 		return project_data:target()
 	end
+
 	local current_config = project_data:config()
 	local res
 	for _, target in pairs(targets) do

@@ -140,7 +140,6 @@ local function format_var_cache(project_datas, cmake_data)
 		local param = {}
 		if 'CMAKE_CONFIGURATION_TYPES' == cached_var.name then
 			param.opaque = true
-			local value = vim.split(cached_var.value, ';')
 			res['build_config'].type = 'enum'
 			res['build_config'].choices = value
 			res['build_config'].desc = 'This will be use at compile time. Choices are '.. string.gsub(cached_var.value, ';', ', ')
@@ -253,8 +252,9 @@ return {
 	end,
 	condition = {
 		callback = function(search)
-			return false
-			-- return (not project_files.get():empty()) and utils.has_cmakelists(search)
+			local project_data = project_files.get()
+			local current = project_data:current()
+			return (not project_data:empty()) and nil ~= current and utils.has_cmakelists(search) and cmake_file_api.exists(current)
 		end
 	}
 }
