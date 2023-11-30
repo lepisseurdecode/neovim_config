@@ -36,100 +36,44 @@ function M.new_cached_vars_param(order)
 	}
 end
 
-function M.get_config(project_data, targets)
+function M.get_config(project_data, cmake_data)
+
 	if nil ~= project_data:config() then
 		return project_data:config()
 	end
-	local current_target = project_data:target()
-	local res = nil
-	for _, target in pairs(targets) do
-		local skip = true
-		for _, t in pairs(target) do
-			if 'EXECUTABLE' == t.type or t.name == current_target then
-				skip = false
+
+	if not cmake_data:multi_config_generator() then
+		for _, cache in pairs(cmake_data:cached_variables()) do
+			if 'CMAKE_BUILD_TYPE' == cache.name then
+				return cache.value
 			end
 		end
-
-		if skip then
-			goto continue
-		end
-
-		if 'Debug' == target.config  then
-			return 'Debug'
-		end
-		if 'Release' == target.config then
-			res = 'Release'
-		end
-	    ::continue::
 	end
-	if nil == res then
-		return targets[1].config
+
+	local available = cmake_data:availables_configurations()
+	local current_target = project_data:target()
+	if nil == current_target then
+		return available[1]
 	end
-	return res
+
+	local executables = cmake_data:executables()
+
+	if not #executables then
+		return 'Debug'
+	end
+
+	for _, data in pairs(executables) do
+		for config, _ in pairs(data.config) do
+			return config
+		end
+	end
 end
 
 function M.filter_targets(targets)
 	local res = {}
-	for _, target in pairs(targets) do
-		local config = {
-			targets = {},
-			config = target.config
-		}
-		for _, t in pairs(target.targets) do
-			if 'ALL_BUILD' ~= t.name and 'ZERO_CHECK' ~= t.name and 'INTERFACE_LIBRARY' ~= t.type then
-				table.insert(config.targets, t)
-			end
-		end
-		if #config.targets then
-			table.insert(res, config)
-		end
-	end
-	return res
-end
-
-function M.get_target(project_data, targets)
-	if nil ~= project_data.target then
-		return project_data:target()
-	end
-
-	local current_config = project_data:config()
-	local res
-	for _, target in pairs(targets) do
-		if current_config == target.config then
-			for _, t in pairs(target.targets) do
-				if 'EXECUTABLE' == t.type then
-					return t.name
-				end
-			end
-			return target.targets[1].name
-		end
-
-		if 'Debug' == target.config then
-			local tmp
-			for _, t in pairs(target.targets) do
-				if 'EXECUTABLE' == t.type then
-					tmp = t.name
-				end
-			end
-			if nil == tmp then
-				tmp = target[1].name
-			end
-			return tmp
-		elseif 'Release' == target.config then
-			local tmp
-			for _, t in pairs(target.targets) do
-				if 'EXECUTABLE' == t.type then
-					tmp = t.name
-				end
-			end
-			if nil == tmp then
-				tmp = target[1].name
-			end
-			res = tmp
-		end
-	end
-	if nil == res then
-		return targets[1].targets[1].name
+	for target, data in pairs(targets) do
+		if 'ALL_BUILD' ~= target and 'ZERO_CHECK' ~= target and 'INTERFACE_LIBRARY' ~= data.type then
+			res[target] = data
 	end
 	return res
 end

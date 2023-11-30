@@ -103,35 +103,40 @@ local function get_targets(build_dir ,codemodel)
 	end
 	local res = {}
 	for _, value in pairs(datas.configurations) do
-		local data = {}
+		local config
 		if nil ~= value.name and "" ~= value.name  then
-			data.config = value.name
+			config = value.name
+		else
+			goto next_config
 		end
-		data.targets = {}
+
 		for _, target in pairs(value.targets) do
 			local target_files = file_to_table(string.format(reply_dir, build_dir) .. target.jsonFile)
 			local target_data = {}
 			if nil == target_files then
-				goto continue
+				goto next_target
 			end
 
-			target_data = {
-				name = target.name,
-				type = target_files.type,
-			}
+			if nil == res[target.name] then
+				res[target.name] = {
+					type = target_files.type,
+					name = target.name,
+					config = {}
+				}
+			end
 
 			local nameOnDisk = target_files.nameOnDisk
 			for _, artifact in pairs(target_files.artifacts or {}) do
 				if vim.endswith(artifact.path, nameOnDisk) then
-					target_data.bin = build_dir .. '/' .. artifact.path
+					target_data.config[config] = {bin = build_dir .. '/' .. artifact.path}
 					break
 				end
 			end
 
-			table.insert(data.targets, target_data)
-		    ::continue::
+			table.insert(res, target_data)
+		    ::next_target::
 		end
-		table.insert(res, data)
+		::next_config::
 	end
 	return res
 end
@@ -160,6 +165,44 @@ function M.get(build_dir)
 		end
 		self.prvt.targets = get_targets(self.prvt.build_dir, self.prvt.index.codemodel)
 		return self.prvt.targets
+	end
+	res.multi_config_generator = function(self)
+		return self.prvt.index.generator.multiConfig
+	end
+
+	res.availables_configurations = function(self)
+		if not self.prvt.index.generator.multiConfig then
+			return nil
+		end
+
+		if self.prvt.availables_configurations then
+			return self.prvt.availables_configurations 
+		end
+
+		local self.prvt.availables_configurations = {'Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel'}
+		for _, cache in pairs(cmake_data:cached_variables()) do
+			if 'CMAKE_CONFIGURATION_TYPES' == cache.name then
+				self.prvt.availables_configurations = vim.split(cmake.value, ';')
+				break
+			end
+		end
+
+		return self.prvt.availables_configurations 
+	end
+
+	res.executables = function(self)
+		if nil ~= self.prvt.executables then
+			return self.prvt.executables 
+		end
+		local self.prvt.executables = {}
+		for target, data in pairs(self:targets()) do
+			if 'EXECUTABLE' == data.type then
+				self.prvt.executables[target] = data
+			end
+		end
+		return self.prvt.executables
+	end
+
 	end
 	return res
 end

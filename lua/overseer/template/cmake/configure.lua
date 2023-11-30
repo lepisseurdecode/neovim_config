@@ -12,20 +12,80 @@ local function translate_type(type)
 	end
 end
 
+local function create_build_params(project_datas, cmake_data, params, get_order)
+	params['build_settings----------'] = {
+		desc = 'Build parameters category',
+		type = 'string',
+		optional = true,
+		order = get_order()
+	}
 
-local function get_available_target(targets, config)
+	local config = utils.get_config(project_datas)
 
-	for _, target in pairs(targets) do
-		if config == target.config then
-			local res = {}
-			for _, t in pairs(targets) do
-				table.insert(res, t.name)
+	if cmake_data:multi_config_generator() then
+		params['build_config'] = {
+			name = 'Build Config',
+			desc = 'Available: ' .. table.join(cmake_data:availables_configuration(), ', ')
+			type = 'enum',
+			choices = cmake_data:availables_configuration(),
+			order = get_order(),
+			optional = false
+			default = config
+		}
+	else
+		params['build_config'] = {
+			name = 'Build Config',
+			desc = 'Typicaly is Debug, Release, RelWithDebInfo or MinSizeRel' 
+			type = 'string',
+			order = get_order(),
+			optional = false
+			default = config
+		}
+	end
+
+	local filtred_target = utils.filter_targets(cmake_data:targets())
+	local current_target = project_datas:target() or 'All'
+
+	local available = {'All'}
+	for target, data in pairs(filtred_target) do
+		for target_config, _ in pair(data.config) do
+			if target_config == config then
+				available[#available + 1] = target
 			end
-			return res
 		end
 	end
-	return {}
+
+	res['target'] = {
+		name = 'target',
+		type = 'enum',
+		choices = available,
+		order = order,
+		desc = 'available for '.. config ..': ' .. table.concat(available, ', '),
+		default = current_target,
+	}
 end
+
+local function set_build_params(project_datas, cmake_data, params)
+	local res = {}
+	if params.build_config ~= project_datas:config() then
+		project_datas:set_config(params.build_config)
+		if cmake_data:multi_config_generator then
+			res = {'-DCMAKE_BUILD_TYPE=' .. params.build_config}
+		end
+	end
+
+	if 'All' == params.target then
+		if nil ~= project_datas:target() then
+			project_datas:set_target(nil)
+		end
+	elseif project_datas:target() ~= params.target then
+		project_datas:set_target(params.target)
+	end
+
+	return res
+end
+
+local function create_run_params(project_datas, cmake_data, params)
 local function format_var_cache(project_datas, cmake_data)
 	local res = {}
 	local order = 0
@@ -35,33 +95,7 @@ local function format_var_cache(project_datas, cmake_data)
 		return order
 	end
 
-
-	res['build_settings----------'] = {
-		desc = 'Build parameters category',
-		type = 'string',
-		optional = true,
-		order = get_order()
-	}
-	res ['build_config'] = {
-		name = 'Build Config',
-		order = get_order(),
-		optional = true
-	}
-
-	local filtred_target = utils.filter_targets(cmake_data:targets())
-	local config = utils.get_config(project_datas, filtred_target)
-	local current_target = utils.get_target(project_datas, filtred_target)
-	local available = get_available_target(filtred_target, config)
-
-	res['target'] = {
-		name = 'target',
-		type = 'enum',
-		choices = available,
-		order = order,
-		desc = 'available for '.. config ..': ' .. table.concat(available, ', '),
-		optional = true,
-		default = current_target,
-	}
+	create_build_params(project_datas, cmake_data, res, get_order)
 
 	res['run_settings------------'] = {
 		desc = 'Config parameters category',
@@ -138,12 +172,7 @@ local function format_var_cache(project_datas, cmake_data)
 	}
 	for _, cached_var in ipairs(cmake_data:cached_variables()) do
 		local param = {}
-		if 'CMAKE_CONFIGURATION_TYPES' == cached_var.name then
-			param.opaque = true
-			res['build_config'].type = 'enum'
-			res['build_config'].choices = value
-			res['build_config'].desc = 'This will be use at compile time. Choices are '.. string.gsub(cached_var.value, ';', ', ')
-			res['build_config'].default = config
+		if 'CMAKE_CONFIGURATION_TYPES' == cached_var.name  or 'CMAKE_BUILD_TYPE' == cached_var.name then
 			goto continue
 		end
 
@@ -155,14 +184,6 @@ local function format_var_cache(project_datas, cmake_data)
 		res[param.name] = param
 		::continue::
 	end
-	if(nil == res['build_config'].type) then
-		res['build_config'].type = 'string'
-		res['build_config'].desc = 'This will be used at compile time. Typicaly is Debug, Release, RelWithDebInfo or MinSizeRel'
-		res['build_config'].default = config
-	end
-
-	res['new_cached_vars'] = utils.new_cached_vars_param(get_order())
-	return res
 end
 
 local function translate_value(value)
