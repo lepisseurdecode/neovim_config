@@ -42,6 +42,7 @@ function M.get()
 	res.prvt = {}
 	res.prvt.current = {}
 	res.prvt.datas = datas
+	res.prvt.dirty = false
 	for _, data in ipairs(datas) do
 		if data.is_current then
 			res.prvt.current = data
@@ -49,18 +50,52 @@ function M.get()
 	end
 	res.current = function(self) return self.prvt.current.build_dir end
 	res.config = function(self) return self.prvt.current.config end
-	res.set_config = function(self, config) self.prvt.current.config = config end
+	res.set_config = function(self, config)
+		if self.prvt.current.config ~= config then
+			self.prvt.current.config = config
+			self.prvt.dirty = true
+		end
+	end
 	res.target = function(self) return self.prvt.current.target end
-	res.set_target = function(self, target) self.prvt.current.target = target end
+	res.set_target = function(self, target)
+		if self.prvt.current.target ~= target then
+			self.prvt.current.target = target
+			self.prvt.dirty = true
+		end
+	end
 	res.install_prefix = function(self) return self.prvt.current.install_prefix end
-	res.set_install_prefix = function(self, prefix) self.prvt.current.install_prefix = prefix end
+	res.set_install_prefix = function(self, prefix)
+		if self.prvt.current.install_prefix ~= prefix then
+			self.prvt.current.install_prefix = prefix
+			self.prvt.dirty = true
+		end
+	end
 	res.variables_environment = function(self) return self.prvt.current.variables_environment end
-	res.set_variables_environment = function(self, env_vars) self.prvt.current.variables_environment = env_vars end
+	res.set_variables_environment = function(self, env_vars)
+		if self.prvt.current.variables_environment ~= env_vars then
+			self.prvt.current.variables_environment = env_vars
+			self.prvt.dirty = true
+		end
+	end
 	res.working_directory = function(self) return self.prvt.current.working_directory end
-	res.set_working_directory = function(self, wd) self.prvt.current.working_directory = wd end
+	res.set_working_directory = function(self, wd)
+		if self.prvt.current.working_directory ~= wd then
+			self.prvt.current.working_directory = wd
+			self.prvt.dirty = true
+		end
+	end
 	res.launch_params = function(self) return self.prvt.current.launch_params end
-	res.set_launch_params = function(self, params) self.prvt.current.launch_params = params end
-	res.write = function(self) write(self.prvt.datas) end
+	res.set_launch_params = function(self, params)
+		if self.prvt.current.launch_params ~= params then
+			self.prvt.current.launch_params = params
+			self.prvt.dirty = true
+		end
+	end
+	res.write = function(self) 
+		if self.prvt.dirty then
+			write(self.prvt.datas)
+		end
+	end
 	res.empty = function(self) return #self.prvt.datas == 0 end
 	res.count = function(self) return #self.prvt.datas end
 
@@ -83,6 +118,10 @@ function M.get()
 	end
 
 	res.set_current = function(self, name)
+		if name == self.prvt.current then
+			return
+		end
+		self.prvt.dirty = true
 		for _, data in pairs(self.prvt.datas) do
 			if name == data.build_dir then
 				data.is_current = true
@@ -92,6 +131,9 @@ function M.get()
 			end
 		end
 	end
+
+	res.dirty = function (self) return self.prvt.dirty end
+
 	return res
 end
 

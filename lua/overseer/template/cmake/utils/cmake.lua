@@ -3,7 +3,7 @@ local M = {}
 function M.has_cmakelists(search)
 	local dir = vim.loop.fs_scandir(vim.loop.fs_realpath(search.dir))
 	local file = vim.loop.fs_scandir_next(dir)
-	while nil ~= file or fail ~= file do
+	while nil ~= file do
 		if file == 'CMakeLists.txt' then
 			return true
 		end
@@ -52,7 +52,7 @@ function M.get_config(project_data, cmake_data)
 
 	local available = cmake_data:availables_configurations()
 	local current_target = project_data:target()
-	if nil == current_target then
+	if nil == current_target and nil ~= available then
 		return available[1]
 	end
 
@@ -74,6 +74,7 @@ function M.filter_targets(targets)
 	for target, data in pairs(targets) do
 		if 'ALL_BUILD' ~= target and 'ZERO_CHECK' ~= target and 'INTERFACE_LIBRARY' ~= data.type then
 			res[target] = data
+		end
 	end
 	return res
 end

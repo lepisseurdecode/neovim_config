@@ -67,29 +67,29 @@ local function get_cache_variables(cache_file)
 		end
 	 local res = {}
 	 for _, value in pairs(datas.entries) do
-	 	if "INTERNAL" ~= value.type and "STATIC" ~= value.type then
-	 		local entry = {}
-	 		local skip = false
-	 		entry.name = value.name
-	 		entry.type = value.type
-	 		if 'BOOL' == entry.type then
-	 			entry.value = "TRUE" == value.value or "ON" == value.value
-	 		else
-	 			entry.value = value.value
-	 		end
-	 		if nil ~= value.properties then
-	 			for _, prop in pairs(value.properties) do
-	 				if "HELPSTRING" == prop.name then
-	 					entry.help_string = prop.value
-	 				elseif 'ADVANCED' == prop.name then
-	 					skip = true
-	 				end
-	 			end
-	 		end
-	 		if not skip then
-	 			table.insert(res, entry)
-	 		end
-	 	end
+	 	if "INTERNAL" == value.type and "STATIC" == value.type then
+			goto continue
+		end
+
+		local entry = {type = value.type}
+
+		if 'BOOL' == entry.type then
+			entry.value = "TRUE" == value.value or "ON" == value.value
+		else
+			entry.value = value.value
+		end
+
+		if nil ~= value.properties then
+			for _, prop in pairs(value.properties) do
+				if "HELPSTRING" == prop.name then
+					entry.help_string = prop.value
+				elseif 'ADVANCED' == prop.name then
+					goto continue
+				end
+			end
+		end
+		res[value.name] = entry
+		::continue::
 	 end
 	 return res
 end
@@ -112,7 +112,6 @@ local function get_targets(build_dir ,codemodel)
 
 		for _, target in pairs(value.targets) do
 			local target_files = file_to_table(string.format(reply_dir, build_dir) .. target.jsonFile)
-			local target_data = {}
 			if nil == target_files then
 				goto next_target
 			end
@@ -128,12 +127,11 @@ local function get_targets(build_dir ,codemodel)
 			local nameOnDisk = target_files.nameOnDisk
 			for _, artifact in pairs(target_files.artifacts or {}) do
 				if vim.endswith(artifact.path, nameOnDisk) then
-					target_data.config[config] = {bin = build_dir .. '/' .. artifact.path}
+					res[target.name].config[config] = {bin = build_dir .. '/' .. artifact.path}
 					break
 				end
 			end
 
-			table.insert(res, target_data)
 		    ::next_target::
 		end
 		::next_config::
@@ -179,22 +177,22 @@ function M.get(build_dir)
 			return self.prvt.availables_configurations 
 		end
 
-		local self.prvt.availables_configurations = {'Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel'}
-		for _, cache in pairs(cmake_data:cached_variables()) do
+		self.prvt.availables_configurations = {'Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel'}
+		for _, cache in pairs(self:cached_variables()) do
 			if 'CMAKE_CONFIGURATION_TYPES' == cache.name then
-				self.prvt.availables_configurations = vim.split(cmake.value, ';')
+				self.prvt.availables_configurations = vim.split(cache.value, ';')
 				break
 			end
 		end
 
-		return self.prvt.availables_configurations 
+		return self.prvt.availables_configurations
 	end
 
 	res.executables = function(self)
 		if nil ~= self.prvt.executables then
-			return self.prvt.executables 
+			return self.prvt.executables
 		end
-		local self.prvt.executables = {}
+		self.prvt.executables = {}
 		for target, data in pairs(self:targets()) do
 			if 'EXECUTABLE' == data.type then
 				self.prvt.executables[target] = data
@@ -203,7 +201,6 @@ function M.get(build_dir)
 		return self.prvt.executables
 	end
 
-	end
 	return res
 end
 

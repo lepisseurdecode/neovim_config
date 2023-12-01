@@ -4,9 +4,9 @@ return require('packer').startup(function()
 --	use {'C:/Users/Aschkor/multiproject.nvim',
 --		config = function()require'multiproject_nvim'.setup()end
 --	}
-use {'C:/Users/Aschkor/cmake.nvim',
-	config = function()require'cmake_nvim'.setup()end
-}
+-- use {'C:/Users/Aschkor/cmake.nvim',
+-- 	config = function()require'cmake_nvim'.setup()end
+-- }
 
 	use {'nvim-tree/nvim-tree.lua',
 		config = require('config.tree_explorer').config,
