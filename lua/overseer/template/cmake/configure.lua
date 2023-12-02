@@ -25,9 +25,9 @@ local function create_build_params(project_datas, cmake_data, params, order)
 	if cmake_data:multi_config_generator() then
 		params['build_config'] = {
 			name = 'Build Config',
-			desc = 'Available: ' .. table.concat(cmake_data:availables_configuration(), ', '),
+			desc = 'Available: ' .. table.concat(cmake_data:availables_configurations(), ', '),
 			type = 'enum',
-			choices = cmake_data:availables_configuration(),
+			choices = cmake_data:availables_configurations(),
 			order = order:get(),
 			optional = false,
 			default = config
@@ -67,11 +67,12 @@ end
 
 local function set_build(project_datas, cmake_data, params)
 	local res = {}
-	project_datas:set_config(params.build_config)
 
-	if params.build_config ~= project_datas:config() and cmake_data:multi_config_generator() then
+	if params.build_config ~= project_datas:config() and not cmake_data:multi_config_generator() then
 		res = {'-DCMAKE_BUILD_TYPE=' .. params.build_config}
 	end
+
+	project_datas:set_config(params.build_config)
 
 	if 'All' == params.target then
 		project_datas:set_target(nil)
@@ -116,7 +117,6 @@ local function create_run_params(project_datas, params, order)
 		delimiter = ';',
 		order = order:get(),
 		optional = true,
-		default = project_datas:env_var(),
 		validate = function(param)
 			for _, p in pairs(param) do
 				if 2 ~= #vim.split(p, '=') then
@@ -198,20 +198,27 @@ end
 local function set_cached_variables(cmake_data, params)
 	local res = {}
 	for name, data in pairs(cmake_data:cached_variables()) do
+
+		if 'CMAKE_CONFIGURATION_TYPES' == name  or 'CMAKE_BUILD_TYPE' == name then
+			goto continue
+		end
+
 		local value = params[name]
+		if value == data.value then
+			goto continue
+		end
 		if type(value) == 'boolean' then
 			value = value and 'TRUE' or 'FALSE'
 		elseif type(value) == 'table' then
 			value = table.concat(value, ';')
 		end
 
-		if value ~= data.value then
-			local type = ''
-			if nil ~= data.type then
-				type = ':' .. data.type
-			end
-			res[#res + 1] = '-D' .. name .. type ..'=' .. value
+		local type = ''
+		if nil ~= data.type then
+			type = ':' .. data.type
 		end
+		res[#res + 1] = '-D' .. name .. type ..'=' .. value or ""
+		::continue::
 	end
 	return res
 end

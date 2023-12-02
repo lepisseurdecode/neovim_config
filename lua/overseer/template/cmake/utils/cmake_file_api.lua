@@ -90,8 +90,8 @@ local function get_cache_variables(cache_file)
 		end
 		res[value.name] = entry
 		::continue::
-	 end
-	 return res
+	end
+	return res
 end
 
 
@@ -132,7 +132,7 @@ local function get_targets(build_dir ,codemodel)
 				end
 			end
 
-		    ::next_target::
+			::next_target::
 		end
 		::next_config::
 	end
@@ -178,11 +178,10 @@ function M.get(build_dir)
 		end
 
 		self.prvt.availables_configurations = {'Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel'}
-		for _, cache in pairs(self:cached_variables()) do
-			if 'CMAKE_CONFIGURATION_TYPES' == cache.name then
-				self.prvt.availables_configurations = vim.split(cache.value, ';')
-				break
-			end
+
+		local cached_var = self:cached_variables()
+		if nil ~= cached_var.CMAKE_CONFIGURATION_TYPES then
+			self.prvt.availables_configurations = vim.split(cached_var.CMAKE_CONFIGURATION_TYPES.value, ';')
 		end
 
 		return self.prvt.availables_configurations

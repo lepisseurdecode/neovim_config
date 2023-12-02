@@ -118,14 +118,13 @@ return {
 					end
 					cmake_api.write_query(param.new_build_dir, true, true, true, true)
 					project_data:add(param.new_build_dir)
-					project_data:write()
-				elseif param.current_build_dir ~= current  and param.current_build_dir ~= '' then
+				elseif param.current_build_dir ~= current and param.current_build_dir ~= '' then
 					project_data:set_current(param.current_build_dir)
 					args = {'.', '-B', param.current_build_dir}
-					project_data:write()
 				else
 					args = {'.', '-B', current}
 				end
+				project_data:write()
 				return {
 					cmd = {'cmake'},
 					args = args,

@@ -38,16 +38,15 @@ end
 
 function M.get_config(project_data, cmake_data)
 
-	if nil ~= project_data:config() then
-		return project_data:config()
+	if not cmake_data:multi_config_generator() then
+		local cached_variables = cmake_data:cached_variables()
+		if nil ~= cached_variables.CMAKE_BUILD_TYPE then
+			return cached_variables.CMAKE_BUILD_TYPE.value
+		end
 	end
 
-	if not cmake_data:multi_config_generator() then
-		for _, cache in pairs(cmake_data:cached_variables()) do
-			if 'CMAKE_BUILD_TYPE' == cache.name then
-				return cache.value
-			end
-		end
+	if nil ~= project_data:config() then
+		return project_data:config()
 	end
 
 	local available = cmake_data:availables_configurations()
