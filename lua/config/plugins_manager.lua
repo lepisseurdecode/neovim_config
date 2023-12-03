@@ -20,7 +20,7 @@ return require('packer').startup(function()
 	use {'stevearc/overseer.nvim',
 		config = function ()
 			require('overseer').setup({
-				templates = {"builtin", 'cmake.manage_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run'}
+				templates = {"builtin", 'cmake.manage_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run', 'cmake.install'}
 			})
 		end
 	}
