@@ -89,4 +89,28 @@ function M.order_generator()
 	}
 end
 
+function M.file_exist(path)
+	local file = io.open(path, 'r')
+	if file ~= nil then
+		file:close()
+		return true
+	end
+	return false
+end
+
+function M.get_bin(project_datas, cmake_file)
+	local configuration = M.get_config(project_datas, cmake_file)
+	local target = project_datas:target()
+	for t, data in pairs(cmake_file:executables()) do
+		if (nil == target or target == t) then
+			for config, config_data in pairs(data.config) do
+				if config == configuration and M.file_exist(config_data.bin) then
+					return config_data.bin
+				end
+			end
+		end
+	end
+	return nil
+end
+
 return M

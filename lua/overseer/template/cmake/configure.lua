@@ -1,6 +1,6 @@
-local project_files = require'overseer.template.cmake.utils.list_dir'
+local project_files = require'overseer.template.cmake.utils.project_file'
 local cmake_file_api = require'overseer.template.cmake.utils.cmake_file_api'
-local utils = require'overseer.template.cmake.utils.cmake'
+local utils = require'overseer.template.cmake.utils.utils'
 
 local function translate_type(type)
 	if 'FILEPATH' == type or 'STRING' == type or 'PATH' == type then

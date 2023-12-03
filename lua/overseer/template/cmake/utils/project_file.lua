@@ -1,5 +1,4 @@
-local build_name = '.nvim.cmake'
-local file_name = build_name .. '/list_dir.json'
+local file_name = '.project_file.json.user'
 local M = {}
 
 local function is_exists(file)
@@ -26,9 +25,6 @@ local function read()
 end
 
 local function write(datas)
-	if not is_exists() then
-		vim.loop.fs_mkdir(build_name, 777)
-	end
 	local file = io.open(file_name, 'w')
 	if nil ~= file then
 		file:write(vim.json.encode(datas))

@@ -1,5 +1,5 @@
-local project_files = require'overseer.template.cmake.utils.list_dir'
-local utils = require'overseer.template.cmake.utils.cmake'
+local project_files = require'overseer.template.cmake.utils.project_file'
+local utils = require'overseer.template.cmake.utils.utils'
 return {
 	generator = function(_, cb)
 		local desc = 'compile '

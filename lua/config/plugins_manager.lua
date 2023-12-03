@@ -1,13 +1,6 @@
 return require('packer').startup(function()
 	use 'wbthomason/packer.nvim' -- The Plugin manager
 
---	use {'C:/Users/Aschkor/multiproject.nvim',
---		config = function()require'multiproject_nvim'.setup()end
---	}
--- use {'C:/Users/Aschkor/cmake.nvim',
--- 	config = function()require'cmake_nvim'.setup()end
--- }
-
 	use {'nvim-tree/nvim-tree.lua',
 		config = require('config.tree_explorer').config,
 		require = {{'nvim-tree/nvim-web-devicons',require('nvim-web-devicons').setup}}
@@ -27,7 +20,7 @@ return require('packer').startup(function()
 	use {'stevearc/overseer.nvim',
 		config = function ()
 			require('overseer').setup({
-				templates = {"builtin", 'cmake.select_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run'}
+				templates = {"builtin", 'cmake.manage_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run'}
 			})
 		end
 	}
