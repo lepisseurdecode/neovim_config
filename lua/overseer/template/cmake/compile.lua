@@ -37,8 +37,7 @@ return {
 	end,
 	condition = {
 		callback = function(search)
-			return false
-			-- return not project_files:get():empty() and utils.has_cmakelists(search)
+			return not project_files:get():empty() and utils.has_cmakelists(search)
 		end
 	}
 }
