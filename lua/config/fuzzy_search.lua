@@ -3,6 +3,7 @@ local fuzzy_search = {}
 function fuzzy_search.config()
 	require('telescope').setup{
 		defaults = {
+			file_ignore_patterns = {".git\\", '.git/', '.cache', '%.user', 'build*', 'node_modules'},
 			mappings = {
 				i = {
 					["<cr>"] = function(bufnr)

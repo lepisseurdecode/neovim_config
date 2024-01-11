@@ -1,15 +1,15 @@
+local utils = require 'overseer.template.cmake.utils.utils'
+
 local M = {}
 local api_dir = '%s/.cmake/api/v1/%s'
 local reply_dir = '%s/.cmake/api/v1/reply/'
 local client_name = 'overseer.cmake'
 
 local function file_to_table(path)
-	local file = io.open(path, 'r')
-	if nil == file then
-		return nil
+	local content = utils.read_file(path)
+	if nil == content then
+		return {}
 	end
-	local content = file:read('a*')
-	file:close()
 	return vim.json.decode(content)
 end
 
@@ -53,12 +53,10 @@ local function read_index(build_dir)
 		add_to_res('toolchains')
 		add_to_res('cmakeFiles')
 	end
+
 	res.generator = datas.cmake.generator
 	return res
 end
-
-
-
 
 local function get_cache_variables(cache_file)
 	 local datas = file_to_table(cache_file)
@@ -139,11 +137,16 @@ local function get_targets(build_dir ,codemodel)
 	return res
 end
 
+function M.exists(build_dir)
+	return nil ~= find_index('./' .. string.format(reply_dir, build_dir))
+end
+
 function M.get(build_dir)
 	local res = {}
 	res.prvt = {}
 	res.prvt.build_dir = build_dir
 	res.prvt.index = read_index(build_dir)
+	res.exists = M.exists
 	res.cached_variables = function(self)
 		if nil ~= self.prvt.cached_variables then
 			return self.prvt.cached_variables
@@ -231,13 +234,8 @@ function M.write_query(build_dir, cache, codemodel, toolchains, cmake_files)
 			vim.loop.fs_mkdir(tmp, 777)
 		end
 	end
-	local file = io.open( path .. 'query.json', 'w')
-	file:write(res)
-	file:close()
+	utils.write_file(path .. 'query.json', res)
 end
 
-function M.exists(build_dir)
-	return nil ~= find_index('./' .. string.format(reply_dir, build_dir))
-end
 
 return M

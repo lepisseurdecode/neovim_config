@@ -7,7 +7,7 @@ return {
 		local project_datas = project_files.get()
 		local cmake_data = cmake_file_api.get(project_datas:current())
 		cb({require'overseer'.wrap_template({
-			name = 'run',
+			name = 'RUN',
 			builder = function()
 				local build_dir = project_datas:current()
 				local res = {
@@ -46,7 +46,7 @@ return {
 	condition = {
 		callback = function(search)
 			local project_datas = project_files.get()
-			if not utils.has_cmakelists(search) or project_datas:empty() or nil == project_datas:current() then
+			if not utils.has_cmakelists(search.dir) or project_datas:empty() or nil == project_datas:current() then
 				return false
 			end
 			local cmake_data = cmake_file_api.get(project_datas:current())

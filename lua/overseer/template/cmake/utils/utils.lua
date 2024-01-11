@@ -1,22 +1,12 @@
 local M = {}
 
-function M.has_cmakelists(search)
-	local dir = vim.loop.fs_scandir(vim.loop.fs_realpath(search.dir))
-	local file = vim.loop.fs_scandir_next(dir)
-	while nil ~= file do
-		if file == 'CMakeLists.txt' then
-			return true
-		end
-		file = vim.loop.fs_scandir_next(dir)
-	end
-	return false
-end
+function M.has_cmakelists(cwd) return M.file_exist(cwd .. '/CMakeLists.txt') end
 
 function M.new_cached_vars_param(order)
 	return {
 		type = 'list',
 		subtype = {
-			type = 'string'
+			type = 'string',
 		},
 		delimiter = ';',
 		order = order,
@@ -32,12 +22,11 @@ function M.new_cached_vars_param(order)
 				end
 			end
 			return true
-		end
+		end,
 	}
 end
 
 function M.get_config(project_data, cmake_data)
-
 	if not cmake_data:multi_config_generator() then
 		local cached_variables = cmake_data:cached_variables()
 		if nil ~= cached_variables.CMAKE_BUILD_TYPE then
@@ -80,29 +69,42 @@ end
 
 function M.order_generator()
 	return {
-		prvt = {count = 0},
+		prvt = { count = 0 },
 		get = function(self)
 			local count = self.prvt.count
 			self.prvt.count = self.prvt.count + 1
 			return count
-		end
+		end,
 	}
 end
 
-function M.file_exist(path)
-	local file = io.open(path, 'r')
-	if file ~= nil then
-		file:close()
-		return true
+function M.read_file(path)
+	local stat = vim.loop.fs_stat(path)
+	if nil == stat or fail == stat then
+		return nil
 	end
-	return false
+	local fd = vim.loop.fs_open(path, 'r', 438)
+	local res = vim.loop.fs_read(fd, stat.size)
+	vim.loop.fs_close(fd)
+	return res
 end
+
+function M.write_file(path, content)
+	local fd = vim.loop.fs_open(path, 'w', 438)
+	local res = vim.loop.fs_write(fd, content)
+	vim.loop.fs_close(fd)
+	return fail ~= res
+end
+
+function M.file_exist(path) return nil ~= vim.loop.fs_stat(path) end
+
+function force_symlink(target_path, link_path) vim.loop.fs_symlink(target_path, link_path) end
 
 function M.get_bin(project_datas, cmake_file)
 	local configuration = M.get_config(project_datas, cmake_file)
 	local target = project_datas:target()
 	for t, data in pairs(cmake_file:executables()) do
-		if (nil == target or target == t) then
+		if nil == target or target == t then
 			for config, config_data in pairs(data.config) do
 				if config == configuration and M.file_exist(config_data.bin) then
 					return config_data.bin
@@ -111,6 +113,18 @@ function M.get_bin(project_datas, cmake_file)
 		end
 	end
 	return nil
+end
+
+function M.symlink_compile_commands_json(project_data)
+	local origin = project_data:current() .. '/compile_commands.json'
+	if not M.file_exist(origin) then
+		return
+	end
+	local link = './compile_commands.json'
+	if M.file_exist(link) then
+		os.remove(link)
+	end
+	vim.loop.fs_symlink(origin, link)
 end
 
 return M

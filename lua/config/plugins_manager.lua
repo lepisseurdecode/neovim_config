@@ -1,28 +1,20 @@
 return require('packer').startup(function()
-	use 'wbthomason/packer.nvim' -- The Plugin manager
-
-	use {'nvim-tree/nvim-tree.lua',
+	use {
 		config = require('config.tree_explorer').config,
-		require = {{'nvim-tree/nvim-web-devicons',require('nvim-web-devicons').setup}}
+		require = {{'nvim-tree/nvim-web-devicons', require('nvim-web-devicons').setup}}
 	}
 
 	use 'tpope/vim-surround' -- Plugin to surroundings words
 
-	use {'phaazon/hop.nvim',
+	use {
 		config = require('config.hop').config
 	}
-	use {'williamboman/mason.nvim',
 		config = require('config.lsp').mason
-	}
 	use {'neovim/nvim-lspconfig',
 		config = require('config.lsp').manual_config
 	}
-	use {'stevearc/overseer.nvim',
-		config = function ()
-			require('overseer').setup({
-				templates = {"builtin", 'cmake.manage_build_dir', 'cmake.configure', 'cmake.compile', 'cmake.run', 'cmake.install'}
-			})
-		end
+	use {
+		config = require('config.task_manager').config
 	}
 
 	use { 'williamboman/mason-lspconfig.nvim',
@@ -31,7 +23,7 @@ return require('packer').startup(function()
 	}
 
 	use {'mhartington/formatter.nvim',
-		after = 'mason.nvim',
+		after = ,
 		config = require('config.formatter').config
 	}
 	use {'mfussenegger/nvim-dap'}
@@ -41,7 +33,7 @@ return require('packer').startup(function()
 		config = require('config.dap').install
 	}
 
-	use {'L3MON4D3/LuaSnip',
+	use {
 		config = require('config.snippet').config
 	}
 

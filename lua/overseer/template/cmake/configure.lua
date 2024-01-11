@@ -1,5 +1,3 @@
-local project_files = require'overseer.template.cmake.utils.project_file'
-local cmake_file_api = require'overseer.template.cmake.utils.cmake_file_api'
 local utils = require'overseer.template.cmake.utils.utils'
 
 local function translate_type(type)
@@ -246,11 +244,12 @@ local function translate_value(value)
 end
 
 
-return {
+local res = {}
+res =  {
 	generator = function(_, cb)
-		local project_datas = project_files.get()
+		local project_datas = res.metadata.config
 		local current_dir = project_datas:current()
-		local cmake_data = cmake_file_api.get(current_dir)
+		local cmake_data = res.metadata.cmake_datas
 		cb({require'overseer'.wrap_template({
 			name = 'Settings',
 			desc = 'Settings of the build directory ' .. current_dir,
@@ -273,6 +272,7 @@ return {
 					components = {
 						{'on_output_quickfix', set_diagnostics = true},
 						'default',
+						'file_project'
 					}
 				}
 			end
@@ -280,9 +280,16 @@ return {
 	end,
 	condition = {
 		callback = function(search)
-			local project_data = project_files.get()
+			local project_data = res.metadata.config
 			local current = project_data:current()
-			return (not project_data:empty()) and nil ~= current and utils.has_cmakelists(search) and cmake_file_api.exists(current)
+			return (not project_data:empty()) and nil ~= current and utils.has_cmakelists(search.dir) and res.metadata.cmake_datas.exists(current)
 		end
+	},
+	metadata = {
+		config = require'overseer.template.cmake.utils.project_file'.get(),
+		cmake_datas = require'overseer.template.cmake.utils.cmake_file_api'.get(),
 	}
+
 }
+
+return res

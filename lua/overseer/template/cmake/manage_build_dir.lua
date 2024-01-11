@@ -1,6 +1,6 @@
-local project_files = require'overseer.template.cmake.utils.project_file'
-local utils = require'overseer.template.cmake.utils.utils'
-local cmake_api = require'overseer.template.cmake.utils.cmake_file_api'
+local project_files = require 'overseer.template.cmake.utils.project_file'
+local utils = require 'overseer.template.cmake.utils.utils'
+local cmake_api = require 'overseer.template.cmake.utils.cmake_file_api'
 
 return {
 	generator = function(_, cb)
@@ -19,7 +19,7 @@ return {
 				name = 'Current build dir',
 				desc = 'New current build directory (current is ' .. current .. ')',
 				order = order:get(),
-				default = current
+				default = current,
 			}
 		else
 			name = 'Create build dir'
@@ -71,17 +71,17 @@ return {
 				'Sublime Text 2 - MinGW Makefiles',
 				'Sublime Text 2 - NMake Makefiles',
 				'Sublime Text 2 - Ninja',
-				'Sublime Text 2 - Unix Makefiles'
+				'Sublime Text 2 - Unix Makefiles',
 			},
 			name = 'Generator',
 			desc = 'Generator used in the new build directory',
 			order = order:get(),
-			default = 'default'
+			default = 'default',
 		}
 		params.export_compile_command = {
 			type = 'boolean',
 			name = 'Export compile command',
-			desc = "Export compile_command.json for the new directory",
+			desc = 'Export compile_command.json for the new directory',
 			order = order:get(),
 			default = true,
 			optional = false,
@@ -89,54 +89,57 @@ return {
 		params.cmake_bin = {
 			type = 'string',
 			name = 'cmake binary',
-			desc = "Path to the cmake binary for the new directory",
+			desc = 'Path to the cmake binary for the new directory',
 			order = order:get(),
 			default = 'cmake',
 			optional = false,
 		}
 		params.cached_vars = utils.new_cached_vars_param(order:get())
 
-		cb({require'overseer'.wrap_template({
-			name = name,
-			desc = desc,
-			params = params,
-			builder = function (param)
-
-				local args
-				if param.new_build_dir ~= nil then
-					args = {'.', '-B', param.new_build_dir}
-					if 'default' ~= param.generator then
-						table.insert(args, '-G' .. param.generator)
-					end
-					if param.export_compile_command then
-						table.insert(args, '-DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE')
-					end
-					if nil ~= param.cached_vars then
-						for _, var in ipairs(param.cached_vars) do
-							table.insert(args, '-D' .. var)
+		cb {
+			require('overseer').wrap_template {
+				name = name,
+				desc = desc,
+				params = params,
+				builder = function(param)
+					local args
+					if param.new_build_dir ~= nil then
+						cmake_api.write_query(param.new_build_dir, true, true, true, true)
+						project_data:add(param.new_build_dir)
+						args = { '.', '-B', param.new_build_dir }
+						if 'default' ~= param.generator then
+							table.insert(args, '-G' .. param.generator)
 						end
+						if param.export_compile_command then
+							table.insert(args, '-DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE')
+							project_data:set_export_compile_command(true)
+						end
+						if nil ~= param.cached_vars then
+							for _, var in ipairs(param.cached_vars) do
+								table.insert(args, '-D' .. var)
+							end
+						end
+					elseif param.current_build_dir ~= current and param.current_build_dir ~= '' then
+						project_data:set_current(param.current_build_dir)
+						args = { '.', '-B', param.current_build_dir }
+					else
+						args = { '.', '-B', current }
 					end
-					cmake_api.write_query(param.new_build_dir, true, true, true, true)
-					project_data:add(param.new_build_dir)
-				elseif param.current_build_dir ~= current and param.current_build_dir ~= '' then
-					project_data:set_current(param.current_build_dir)
-					args = {'.', '-B', param.current_build_dir}
-				else
-					args = {'.', '-B', current}
-				end
-				project_data:write()
-				return {
-					cmd = {'cmake'},
-					args = args,
-					components = {
-						{'on_output_quickfix', set_diagnostics = true},
-						'default',
+					project_data:write()
+					utils.symlink_compile_commands_json(project_data)
+					return {
+						cmd = { 'cmake' },
+						args = args,
+						components = {
+							{ 'on_output_quickfix', set_diagnostics = true },
+							'default',
+						},
 					}
-				}
-			end,
-		})})
+				end,
+			},
+		}
 	end,
 	condition = {
-		callback = utils.has_cmakelists
-	}
+		callback = function(search) return utils.has_cmakelists(search.dir) end,
+	},
 }

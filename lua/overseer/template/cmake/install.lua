@@ -5,7 +5,7 @@ local utils = require'overseer.template.cmake.utils.utils'
 return {
 	generator = function(_, cb)
 		cb({require'overseer'.wrap_template({
-			name = 'install',
+			name = 'INSTALL',
 			builder = function()
 				local project_datas = project_files.get()
 				local cmake_data = cmake_file_api.get(project_datas:current())
@@ -32,7 +32,7 @@ return {
 	condition = {
 		callback = function(search)
 			local project_datas = project_files.get()
-			return utils.has_cmakelists(search) and not project_datas:empty() and nil ~= project_datas:current()
+			return utils.has_cmakelists(search.dir) and not project_datas:empty() and nil ~= project_datas:current()
 		end
 	}
 }

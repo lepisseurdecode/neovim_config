@@ -1,10 +1,6 @@
+local utils = require 'overseer.template.cmake.utils.utils'
 local file_name = '.project_file.json.user'
 local M = {}
-
-local function is_exists(file)
-	file = file or file_name
-	return vim.loop.fs_stat(file) ~= nil
-end
 
 local function clean(datas)
 	for i, data in ipairs(datas) do
@@ -16,21 +12,14 @@ local function clean(datas)
 end
 
 local function read()
-	if not is_exists() then return {} end
-	local content = ''
-	for line in io.lines(file_name) do
-		content = content .. line
+	local content = utils.read_file(file_name)
+	if nil == content then
+		return {}
 	end
-	return clean(vim.json.decode(content)) or {}
+	return vim.json.decode(content)
 end
 
-local function write(datas)
-	local file = io.open(file_name, 'w')
-	if nil ~= file then
-		file:write(vim.json.encode(datas))
-		file:close()
-	end
-end
+local function write(datas) utils.write_file(file_name, vim.json.encode(clean(datas))) end
 
 function M.get()
 	local datas = read()
@@ -87,21 +76,28 @@ function M.get()
 			self.prvt.dirty = true
 		end
 	end
-	res.write = function(self) 
+	res.write = function(self)
 		if self.prvt.dirty then
 			write(self.prvt.datas)
 		end
 	end
-	res.empty = function(self) return #self.prvt.datas == 0 end
+	res.empty = function(self) return 0 == self:count() end
 	res.count = function(self) return #self.prvt.datas end
 
+	res.export_compile_command = function(self) return self.prvt.export_compile_command end
+	res.set_export_compile_command = function(self, export_compile_command)
+		if self.prvt.export_compile_command ~= export_compile_command then
+			self.prvt.export_compile_command = export_compile_command
+			self.prvt.dirty = true
+		end
+	end
 	res.add = function(self, name)
 		for _, data in pairs(self.prvt.datas) do
 			if data.build_dir == name then
 				return
 			end
 		end
-		table.insert(self.prvt.datas, {build_dir = name})
+		table.insert(self.prvt.datas, { build_dir = name })
 		self:set_current(name)
 	end
 
@@ -128,7 +124,7 @@ function M.get()
 		end
 	end
 
-	res.dirty = function (self) return self.prvt.dirty end
+	res.dirty = function(self) return self.prvt.dirty end
 
 	return res
 end

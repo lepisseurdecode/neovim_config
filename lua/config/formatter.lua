@@ -12,7 +12,7 @@ function formatter.config()
 			}
 		}
 	})
-	vim.api.nvim_create_autocmd('BufWritePre', {command = 'FormatWrite', group = gr_name})
+	vim.api.nvim_create_autocmd('BufWritePost', {command = 'FormatWrite', group = gr_name})
 end
 
 return formatter
