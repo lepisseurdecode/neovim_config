@@ -9,6 +9,7 @@ return {
 			filetype = {
 				cpp = { require('formatter.filetypes.cpp').clangformat },
 				lua = { require('formatter.filetypes.lua').stylua },
+				json = { require('formatter.filetypes.json').biome },
 				-- bogue on windows
 				-- ['*'] = { require('formatter.filetypes.any').remove_trailing_whitespace },
 			},
