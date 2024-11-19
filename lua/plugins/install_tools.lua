@@ -17,7 +17,7 @@ return {
 					'clang-format',
 					'stylua',
 					'pyright',
-					'cmake',
+					'neocmake',
 					'quick_lint_js',
 					'jsonls',
 					'lua_ls',

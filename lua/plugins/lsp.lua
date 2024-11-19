@@ -1,41 +1,12 @@
 local function on_attach(client, bufnr)
 	client.server_capabilities.semanticTokensProvider = nil
-	vim.api.nvim_set_keymap(
-		'n',
-		'K',
-		'',
-		{ noremap = true, silent = true, callback = vim.lsp.buf.hover, buffer = bufnr }
-	)
-	vim.api.nvim_set_keymap(
-		'n',
-		'<C-K>',
-		'',
-		{ noremap = true, silent = true, callback = vim.lsp.buf.signature_help, buffer = bufnr }
-	)
-	vim.api.nvim_set_keymap(
-		'n',
-		'<leader>lr',
-		'',
-		{ noremap = true, silent = true, callback = vim.lsp.buf.rename, buffer = bufnr }
-	)
-	vim.api.nvim_set_keymap(
-		'n',
-		'<leader>lc',
-		'',
-		{ noremap = true, silent = true, callback = vim.lsp.buf.code_action, buffer = bufnr }
-	)
-	vim.api.nvim_set_keymap(
-		'n',
-		'gel',
-		'',
-		{ noremap = true, silent = true, callback = vim.diagnostic.goto_next, buffer = bufnr }
-	)
-	vim.api.nvim_set_keymap(
-		'n',
-		'geh',
-		'',
-		{ noremap = true, silent = true, callback = vim.diagnostic.goto_prev, buffer = bufnr }
-	)
+	vim.keymap.set('n', 'K', vim.lsp.buf.hover, { noremap = true, silent = true, buffer = bufnr })
+	vim.keymap.set('n', '<C-K>', vim.lsp.buf.signature_help, { noremap = true, silent = true, buffer = bufnr })
+	vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { noremap = true, silent = true, buffer = bufnr })
+	vim.keymap.set('n', '<leader>lc', vim.lsp.buf.code_action, { noremap = true, silent = true, buffer = bufnr })
+	vim.keymap.set('n', 'gel', vim.diagnostic.goto_next, { noremap = true, silent = true, buffer = bufnr })
+	vim.keymap.set('n', 'geh', vim.diagnostic.goto_prev, { noremap = true, silent = true, buffer = bufnr })
+	vim.keymap.set('n', '<leader><C-s>', vim.lsp.buf.document_symbol, { noremap = true, silent = true, buffer = bufnr })
 end
 
 return {
