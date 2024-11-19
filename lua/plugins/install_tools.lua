@@ -1,18 +1,18 @@
 return {
 	{
 		'williamboman/mason.nvim',
-		config = function() require'mason'.setup() end
+		config = function() require('mason').setup() end,
 	},
 	{
 		'williamboman/mason-lspconfig',
-		dependency = 'williamboman/mason.nvim',
+		dependencies = 'williamboman/mason.nvim',
 	},
 	{
 		'WhoIsSethDaniel/mason-tool-installer.nvim',
-		dependency = { 'williamboman/mason.nvim', 'williamboman/mason-lspconfig' },
+		dependencies = { 'williamboman/mason.nvim', 'williamboman/mason-lspconfig' },
 		config = function()
 			-- require'mason'.setup()
-			require('mason-tool-installer').setup{
+			require('mason-tool-installer').setup {
 				ensure_installed = {
 					'clang-format',
 					'stylua',

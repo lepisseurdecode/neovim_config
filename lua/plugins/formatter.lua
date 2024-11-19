@@ -1,6 +1,6 @@
 return {
 	'mhartington/formatter.nvim',
-	dependency = 'mason.nvim',
+	dependencies = { 'mason.nvim' },
 	event = 'BufWritePre',
 	config = function()
 		require('formatter').setup {
@@ -10,6 +10,7 @@ return {
 				cpp = { require('formatter.filetypes.cpp').clangformat },
 				lua = { require('formatter.filetypes.lua').stylua },
 				json = { require('formatter.filetypes.json').biome },
+				cmake = { require('formatter.filetypes.cmake').cmakeformat },
 				-- bogue on windows
 				-- ['*'] = { require('formatter.filetypes.any').remove_trailing_whitespace },
 			},
