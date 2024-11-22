@@ -13,6 +13,8 @@ set.autoread = true
 set.rnu = true
 set.cursorline = true
 
+set.clipboard = 'unnamedplus,unnamed'
+
 vim.filetype.add {
 	extension = {
 		qml = 'qmljs',
