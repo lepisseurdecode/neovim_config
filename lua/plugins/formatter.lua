@@ -10,7 +10,19 @@ return {
 			filetype = {
 				cpp = { require('formatter.filetypes.cpp').clangformat },
 				lua = { require('formatter.filetypes.lua').stylua },
-				json = { require('formatter.filetypes.json').biome },
+				css = { require('formatter.filetypes.css').prettierd },
+				-- flow = { require('formatter.filetypes.flow').prettierd },
+				-- graphql = { require('formatter.filetypes.graphql').prettierd },
+				html = { require('formatter.filetypes.html').prettierd },
+				json = { require('formatter.filetypes.json').prettierd },
+				-- jsx = { require('formatter.filetypes.jsx').prettierd },
+				javascript = { require('formatter.filetypes.javascript').prettierd },
+				-- less = { require('formatter.filetypes.less').prettierd },
+				markdown = { require('formatter.filetypes.markdown').prettierd },
+				scss = { require('formatter.filetypes.css').prettierd },
+				typescript = { require('formatter.filetypes.typescript').prettierd },
+				-- vue = { require('formatter.filetypes.vue').prettierd },
+				yaml = { require('formatter.filetypes.yaml').prettierd },
 				cmake = function()
 					return {
 						exe = 'cmake-format',

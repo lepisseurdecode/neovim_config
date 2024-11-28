@@ -17,6 +17,7 @@ return {
 					'clang-format',
 					'stylua',
 					'pyright',
+					'prettierd',
 					'quick_lint_js',
 					'cmakelang',
 					'neocmake',
