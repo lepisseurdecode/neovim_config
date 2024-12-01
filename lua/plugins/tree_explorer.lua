@@ -20,18 +20,43 @@ return {
 					end
 					local ok, api = pcall(require, 'nvim-tree.api')
 					assert(ok, 'api module is not found')
+
 					api.config.mappings.default_on_attach(bufnr)
 					vim.keymap.set('n', '<CR>', api.node.open.tab_drop, opts 'Tab drop')
-
 					vim.keymap.set('n', '<C-t>', function()
 						local node = api.tree.get_node_under_cursor()
-						local tree_win = api.tree.winid()
-						for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-							if win ~= vim.fn.bufwinid(tree_win) then
-								vim.api.nvim_set_current_win(win)
+						local function exit_tree()
+							local tree_win = api.tree.winid()
+							for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+								if win ~= vim.fn.bufwinid(tree_win) then
+									vim.api.nvim_set_current_win(win)
+								end
 							end
 						end
-						api.node.open.tab(node)
+						if 'directory' == node.type then
+							local files = {}
+							local path = vim.fs.normalize(node.watcher.event.path)
+							for name, type in vim.fs.dir(path) do
+								if 'directory' ~= type then
+									files[#files + 1] = path .. '/' .. name
+								end
+							end
+							if 0 == #files then
+								return
+							end
+							exit_tree()
+							vim.cmd('tabedit ' .. files[1])
+							vim.cmd('Tabby rename_tab ' .. node.name)
+
+							if 1 < #files then
+								for i = 2, #files do
+									vim.cmd('vs ' .. files[i])
+								end
+							end
+						else
+							exit_tree()
+							api.node.open.tab(node)
+						end
 					end, opts 'Open: New Tab')
 					vim.keymap.set('n', '<C-s>', api.node.open.horizontal, {
 						desc = 'nvim-tree: Open Horizontal Split',
