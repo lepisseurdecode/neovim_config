@@ -21,19 +21,19 @@ return {
 		},
 		config = function()
 			local capabilities = require('cmp_nvim_lsp').default_capabilities()
-			require('lspconfig').qmlls.setup {
+			vim.lsp.config('qmlls', {
 				capabilities = capabilities,
 				on_attach = on_attach,
-			}
-			require('mason-lspconfig').setup_handlers {
+			})
+			require('mason-lspconfig').setup {
 				function(server_name)
-					require('lspconfig')[server_name].setup {
+					vim.lsp.config(server_name, {
 						capabilities = capabilities,
 						on_attach = on_attach,
-					}
+					})
 				end,
 				['clangd'] = function()
-					require('lspconfig').clangd.setup {
+					vim.lsp.config('clangd', {
 						capabilities = capabilities,
 						on_attach = function(client)
 							on_attach(client)
@@ -48,7 +48,7 @@ return {
 						sorting = {
 							require 'clangd_extensions.cmp_scores',
 						},
-					}
+					})
 				end,
 			}
 		end,
