@@ -43,6 +43,8 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup("plugins") -- Charge les plugins depuis ~/config/nvim/lua/plugins/
 
+vim.o.exrc = true
+vim.o.secure = true
 local local_config_path = vim.fn.stdpath("config") .. "/local.lua"
 
 if vim.fn.filereadable(local_config_path) == 1 then
