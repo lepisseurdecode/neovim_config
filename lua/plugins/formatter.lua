@@ -6,7 +6,7 @@ return {
 			formatters_by_ft = { ["_"] = { "trim_whitespace" } },
 			format_on_save = {
 				lsp_format = "fallback",
-				timeout_ms = 5000,
+				timeout_ms = 15000,
 			},
 		},
 	},
