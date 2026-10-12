@@ -8,7 +8,28 @@ return {
 	},
 	dependencies = {
 		"nvim-lua/plenary.nvim",
-		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		{
+			"nvim-telescope/telescope-fzf-native.nvim",
+			build = "cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release --target install",
+		},
 	},
-	config = true,
+	config = function()
+		local telescope = require("telescope")
+		local actions = require("telescope.actions")
+
+		telescope.setup({
+			defaults = {
+				mappings = {
+					i = {
+						["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+					},
+					n = {
+						["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+					},
+				},
+			},
+		})
+
+		telescope.load_extension("fzf")
+	end,
 }
